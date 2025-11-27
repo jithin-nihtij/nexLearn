@@ -5,7 +5,9 @@ import React from "react";
 const SendOtp = () => {
   return (
     <div className="w-full">
-      <LoginCard>{<SendOtpCard />}</LoginCard>
+      <LoginCard>
+        <SendOtpCard />
+      </LoginCard>
     </div>
   );
 };
