@@ -5,10 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { sendOtpSchema, TSendOtpSchema } from "@/schema/login";
 import { FloatingInput } from "../common/input-floating-label";
 import { useMutation } from "@tanstack/react-query";
-import { apiClient } from "@/utils/axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { mobileNumberStore } from "@/store/login";
+import { sendOtp } from "@/utils/auth";
 
 const SendOtpCard = () => {
   const form = useForm<TSendOtpSchema>({
@@ -18,12 +18,7 @@ const SendOtpCard = () => {
   const { setMobile } = mobileNumberStore();
 
   const sendPhoneNumberMutation = useMutation({
-    mutationFn: async ({ mobile }: TSendOtpSchema) => {
-      const formData = new FormData();
-      formData.append("mobile", `+91${mobile}`);
-      const response = await apiClient.post("/auth/send-otp", formData);
-      return response.data;
-    },
+    mutationFn: sendOtp,
     onSuccess: () => {
       router.push("/verify-otp");
       toast.success("Otp Sent to your phone number");

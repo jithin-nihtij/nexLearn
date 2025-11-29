@@ -1,33 +1,38 @@
 import { TVerifyOtpSchema, verifyOtpSchema } from "@/schema/login";
 import { mobileNumberStore } from "@/store/login";
-import { apiClient } from "@/utils/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { FloatingInput } from "../common/input-floating-label";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { verifyOtp } from "@/utils/auth";
 
 const VerifyOtpCard = () => {
   const form = useForm<TVerifyOtpSchema>({
     resolver: zodResolver(verifyOtpSchema),
   });
 
+  const router = useRouter();
   const { mobile } = mobileNumberStore();
 
   const verifyOtpMutation = useMutation({
-    mutationFn: async ({ otp }: TVerifyOtpSchema) => {
-      const formData = new FormData();
-      if (mobile) {
-        formData.append("otp", otp);
-        formData.append("mobile", `+91${mobile}`);
-      }
-      const response = await apiClient.post("/auth/verify-otp", formData);
-      return response.data;
+    mutationFn: async (data: TVerifyOtpSchema) => {
+      return verifyOtp({ ...data, mobile: mobile });
     },
-    onSuccess: () => {
-      localStorage.removeItem("mobile");
-      toast.success("Otp Verified");
+    onSuccess: (data) => {
+      const { login, access_token, refresh_token, message } = data;
+      toast.success(message);
+      if (!login) {
+        return router.push("/create-profile");
+      } else {
+        localStorage.removeItem("mobile");
+        Cookies.set("access_token", access_token);
+        Cookies.set("refresh_token", refresh_token);
+        router.push("/");
+      }
     },
     onError: () => {
       toast.error("Error Occured");

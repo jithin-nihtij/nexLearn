@@ -17,3 +17,10 @@ export const verifyOtpSchema = z.object({
 });
 
 export type TVerifyOtpSchema = z.infer<typeof verifyOtpSchema>;
+
+export const createProfileSchema = z.object({
+  name: z.string().min(1, "Please enter the Name"),
+  email: z.email("Please enter the email"),
+  qualification: z.string().min(1, "Please enter the qualification"),
+});
+export type TCreateProfileSchema = z.infer<typeof createProfileSchema>;

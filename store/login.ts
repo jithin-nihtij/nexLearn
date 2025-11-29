@@ -15,3 +15,13 @@ export const mobileNumberStore = create<MobileNumberState>()(
     }
   )
 );
+
+type ProfileImageState = {
+  profileImage?: File;
+  setProfileImage: (profileImage?: File) => void;
+};
+
+export const profileImageStore = create<ProfileImageState>((set) => ({
+  profileImage: undefined,
+  setProfileImage: (data) => set({ profileImage: data }),
+}));

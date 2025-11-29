@@ -1,6 +1,6 @@
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import { handleLogout } from "./auth";
+import { logout } from "./auth";
 
 const withAuth = () => {
   const instance = axios.create({
@@ -23,7 +23,7 @@ const withAuth = () => {
     (err) => {
       if (err.response?.status === 401) {
         // processQueue(err, null);
-        handleLogout();
+        logout();
         // window.location.href = "/auth/login";
         return Promise.reject(err);
       }
